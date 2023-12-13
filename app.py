@@ -135,9 +135,6 @@ def logout():
         flash("Not allowed to logout since you are not logged in.")
         return redirect("/")
 
-    # IMPLEMENT THIS AND FIX BUG
-    # DO NOT CHANGE METHOD ON ROUTE
-
 
 ##############################################################################
 # General user routes:
@@ -172,7 +169,6 @@ def show_user(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-
     return render_template('users/show.html', user=user)
 
 
