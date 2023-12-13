@@ -37,15 +37,16 @@ def add_user_to_g():
     else:
         g.user = None
 
-###added to create g.csrf_form
+
 @app.before_request
 def add_csrf_form_to_g():
     """Add csrf from to g"""
+
     if CURR_USER_KEY in session:
         g.csrf_form = CSRFForm()
+
     else:
         g.csrf_form = None
-
 
 
 def do_login(user):
@@ -125,17 +126,14 @@ def login():
 def logout():
     """Handle logout of user and redirect to homepage."""
 
-    form = g.csrf_form
-
-    if form.validate_on_submit():
+    if g.csrf_form.validate_on_submit():
         do_logout()
 
         flash("Successfully logged out!")
         return redirect("/login")
     else:
         flash("Not allowed to logout since you are not logged in.")
-
-
+        return redirect("/")
 
     # IMPLEMENT THIS AND FIX BUG
     # DO NOT CHANGE METHOD ON ROUTE
@@ -339,8 +337,7 @@ def homepage():
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
-        form = g.csrf_form
-        return render_template('home.html', messages=messages, form=form)
+        return render_template('home.html', messages=messages)
 
     else:
         return render_template('home-anon.html')
