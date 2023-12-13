@@ -254,6 +254,7 @@ def add_message():
     Show form if GET. If valid, update message and redirect to user page.
     """
 
+    breakpoint()
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
