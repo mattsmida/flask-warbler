@@ -6,7 +6,8 @@ from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, CSRFForm, EditUserForm
-from models import db, connect_db, User, Message
+from models import (db, connect_db, User, Message, DEFAULT_HEADER_IMAGE_URL,
+                    DEFAULT_IMAGE_URL)
 
 load_dotenv()
 
@@ -245,13 +246,22 @@ def profile():
     if form.validate_on_submit():
         g.user.username = form.username.data
         g.user.email = form.email.data
-        g.user.image_url = form.image_url.data
-        g.user.header_image_url = form.header_image_url.data
+        g.user.image_url = (form.image_url.data if
+                            form.image_url.data else DEFAULT_IMAGE_URL)
+        g.user.header_image_url = (form.header_image_url.data if
+                                   form.header_image_url.data else
+                                   DEFAULT_HEADER_IMAGE_URL)
+
         g.user.bio = form.bio.data
 
+        if User.authenticate(g.user.username, form.password.data):
+            db.session.commit()
+            return redirect(f'/users/{g.user.id}')
 
+        else:
+            flash("Wrong password.")
 
-
+    return render_template('users/edit.html', form=form)
 
 
 @app.post('/users/delete')

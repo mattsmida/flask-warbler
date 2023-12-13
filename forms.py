@@ -67,7 +67,7 @@ class EditUserForm(FlaskForm):
 
     header_image_url = StringField(
         '(Optional) Header Image URL',
-        validatiors=[Optional(), URL(), Length(max=255)]
+        validators=[Optional(), URL(), Length(max=255)]
     )
 
     bio = TextAreaField(
