@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
-from forms import UserAddForm, LoginForm, MessageForm
+from forms import UserAddForm, LoginForm, MessageForm, CSRFForm
 from models import db, connect_db, User, Message
 
 load_dotenv()
@@ -36,6 +36,16 @@ def add_user_to_g():
 
     else:
         g.user = None
+
+###added to create g.csrf_form
+@app.before_request
+def add_csrf_form_to_g():
+    """Add csrf from to g"""
+    if CURR_USER_KEY in session:
+        g.csrf_form = CSRFForm()
+    else:
+        g.csrf_form = None
+
 
 
 def do_login(user):
@@ -116,6 +126,16 @@ def logout():
     """Handle logout of user and redirect to homepage."""
 
     form = g.csrf_form
+
+    if form.validate_on_submit():
+        do_logout()
+
+        flash("Successfully logged out!")
+        return redirect("/login")
+    else:
+        flash("Not allowed to logout since you are not logged in.")
+
+
 
     # IMPLEMENT THIS AND FIX BUG
     # DO NOT CHANGE METHOD ON ROUTE
@@ -254,7 +274,6 @@ def add_message():
     Show form if GET. If valid, update message and redirect to user page.
     """
 
-    breakpoint()
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -320,8 +339,8 @@ def homepage():
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
-
-        return render_template('home.html', messages=messages)
+        form = g.csrf_form
+        return render_template('home.html', messages=messages, form=form)
 
     else:
         return render_template('home-anon.html')
