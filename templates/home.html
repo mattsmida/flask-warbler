@@ -57,8 +57,14 @@
               <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
               <p>{{ msg.text }}</p>
             </div>
-            <!-- conditional for changing star to bi bi-star-fill -->
-            <i class="bi bi-star"></i>
+            <form method="POST">
+              <!-- conditional for changing star to bi bi-star-fill -->
+              {# TODO: Add the like functionality here,
+              then do the same for the two files called show.html #}
+              <a href='/messages/{{ msg.user.id }}/like'>
+                <i class="bi bi-star"></i>
+              </a>
+            </form>
           </li>
         {% endfor %}
       </ul>

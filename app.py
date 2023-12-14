@@ -321,6 +321,12 @@ def show_message(message_id):
     return render_template('messages/show.html', message=msg)
 
 
+@app.post('/messages/<int:message_id>/like')
+def like_message(message_id):
+    """ Like or unlike a message. """
+
+
+
 @app.post('/messages/<int:message_id>/delete')
 def delete_message(message_id):
     """Delete a message.
