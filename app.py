@@ -43,11 +43,7 @@ def add_user_to_g():
 def add_csrf_form_to_g():
     """Add csrf from to g"""
 
-    if CURR_USER_KEY in session:    # Don't care about session here.
-        g.csrf_form = CSRFForm()    # CSRF for all users, logged in or not.
-
-    else:
-        g.csrf_form = None
+    g.csrf_form = CSRFForm()
 
 
 def do_login(user):
@@ -127,19 +123,15 @@ def login():
 def logout():
     """Handle logout of user and redirect to homepage."""
 
-    # Also check for user here. TODO:
-    # Especially applies after putting in csrf for ALL USERS.
+    if not g.user or not g.csrf_form.validate_on_submit():
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
 
-    # if not formvalonsubmit or not user (just to clean it up a bit)
-    # keep away from having to write else statements if possible.
-    if g.csrf_form.validate_on_submit():   # Could pull this out into own var.
+    else:
         do_logout()
 
         flash("Successfully logged out!")
         return redirect("/login")
-    else:
-        flash("Not allowed to logout since you are not logged in.")
-        return redirect("/")
 
 
 ##############################################################################
@@ -208,9 +200,8 @@ def start_following(follow_id):
 
     Redirect to following page for the current for the current user.
     """
-    # Add the csrf form here.
-    # need g.csrf_form.validate_on_submit()
-    if not g.user:
+
+    if not g.user or not g.csrf_form.validate_on_submit():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
@@ -227,8 +218,8 @@ def stop_following(follow_id):
 
     Redirect to following page for the current for the current user.
     """
-    # ditto csrf
-    if not g.user:
+
+    if not g.user or not g.csrf_form.validate_on_submit():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
@@ -249,30 +240,23 @@ def profile():
 
     form = EditUserForm(obj=g.user)
 
-    # Put g.user into a variable because you see it over and over.
-    # user = g.user
+    user = g.user
+
     if form.validate_on_submit():
-        g.user.username = form.username.data
-        g.user.email = form.email.data
-        g.user.location = form.location.data
-        g.user.image_url = (form.image_url.data if
-                            form.image_url.data else DEFAULT_IMAGE_URL)
-                            # form.image_url.data or DEFAULT_IMAGE_URL
-        g.user.header_image_url = (form.header_image_url.data if
-                                   form.header_image_url.data else
-                                   DEFAULT_HEADER_IMAGE_URL)
-                            # ditto the or
+        if User.authenticate(user.username, form.password.data):
+            user.username = form.username.data
+            user.email = form.email.data
+            user.location = form.location.data
+            user.image_url = form.image_url.data or DEFAULT_IMAGE_URL
+            user.header_image_url = (form.header_image_url.data or
+                                    DEFAULT_HEADER_IMAGE_URL)
+            user.bio = form.bio.data
 
-        g.user.bio = form.bio.data
-
-        # Actually, check the password first
-        # And then the else below is no longer needed.
-        if User.authenticate(g.user.username, form.password.data):
             db.session.commit()
-            return redirect(f'/users/{g.user.id}')
+            return redirect(f'/users/{user.id}')
 
-        else:
-            flash("Wrong password.")
+
+    flash("Wrong password.")
 
     return render_template('users/edit.html', form=form)
 
@@ -283,14 +267,13 @@ def delete_user():
 
     Redirect to signup page.
     """
-
-    # ditto csrf
+    # TODO: delete user messages first
     # Also needs to delete things that depend on this user: messages, etc.
     # (eventually)
-
-    if not g.user:
+    if not g.user or not g.csrf_form.validate_on_submit():
         flash("Access unauthorized.", "danger")
         return redirect("/")
+
 
     do_logout()
 
