@@ -329,17 +329,14 @@ def delete_message(message_id):
     Redirect to user page on success.
     """
 
-    # ditto csrf
-
-    if not g.user:
+    if not g.user or not g.csrf_form.validate_on_submit():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    # Check to see whether this msg belongs to this user.
-
     msg = Message.query.get_or_404(message_id)
-    db.session.delete(msg)
-    db.session.commit()
+    if msg.user_id == g.user.id:
+        db.session.delete(msg)
+        db.session.commit()
 
     return redirect(f"/users/{g.user.id}")
 
