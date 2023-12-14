@@ -325,6 +325,36 @@ def show_message(message_id):
 def like_message(message_id):
     """ Like or unlike a message. """
 
+    ##check for current user and csrf
+    if not g.user or not g.csrf_form.validate_on_submit():
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    ##query the "liked" message
+    ##check that the user id of message does not equal g.user id
+    ##check if that message is already in user likes
+    ##if its not, append to likes
+
+    liked_msg = Message.query.get_or_404(message_id)
+    print("####liked message=", liked_msg)
+
+    if liked_msg.user_id == g.user.id:
+        #redirect to current page??
+        return redirect("/")
+
+    user_likes = g.user.likes
+
+    if liked_msg not in user_likes:
+        g.user.likes.append(liked_msg)
+    else:
+        g.user.likes.delete(liked_msg)
+
+# @app.get('/messages/<int:message_id>/like')
+# def like_message_get(message_id):
+#     liked_msg = Message.query.get_or_404(message_id)
+#     print("####liked message=", liked_msg)
+#     return render_template("home.html")
+
+
 
 
 @app.post('/messages/<int:message_id>/delete')

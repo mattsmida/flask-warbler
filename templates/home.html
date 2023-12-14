@@ -48,7 +48,7 @@
       <ul class="list-group" id="messages">
         {% for msg in messages %}
           <li class="list-group-item">
-            <a href="/messages/{{ msg.id }}" class="message-link"/>
+            <a href="/messages/{{ msg.id }}" class="message-link"></a>
             <a href="/users/{{ msg.user.id }}">
               <img src="{{ msg.user.image_url }}" alt="" class="timeline-image">
             </a>
@@ -57,13 +57,13 @@
               <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
               <p>{{ msg.text }}</p>
             </div>
-            <form method="POST">
+            <form action='/messages/{{ msg.user.id }}/like' method="POST">
               <!-- conditional for changing star to bi bi-star-fill -->
-              {# TODO: Add the like functionality here,
-              then do the same for the two files called show.html #}
-              <a href='/messages/{{ msg.user.id }}/like'>
-                <i class="bi bi-star"></i>
-              </a>
+              <!-- {# TODO: Add the like functionality here,
+              then do the same for the two files called show.html #} -->
+                <!-- <input type='submit'></input> -->
+
+                <a href="/messages/{{ msg.id }}/like"><i class="bi bi-star"></i></a>
             </form>
           </li>
         {% endfor %}
@@ -72,3 +72,4 @@
 
   </div>
 {% endblock %}
+<!-- <i class="bi bi-star"></i> -->

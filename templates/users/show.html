@@ -21,7 +21,21 @@
             </span>
         <p>{{ message.text }}</p>
         <!-- conditional for changing to bi bi-star-fill -->
-        <i class="bi bi-star"></i>
+        <!-- <form action='/messages/{{ message.user.id }}/like' method="POST"> -->
+          <!-- conditional for changing star to bi bi-star-fill -->
+          <!-- {# TODO: Add the like functionality here,
+          then do the same for the two files called show.html #} -->
+            <!-- <input type='submit'></input> -->
+
+            <!-- <a href="/messages/{{ message.id }}/like"><i class="bi bi-star"></i></a>
+        </form> -->
+
+        <form method="POST" action="/messages/{{ message.user.id }}/like">
+          {{ g.csrf_form.hidden_tag() }}
+          <button class="btn btn-outline-primary btn-sm">
+           like
+          </button>
+        </form>
       </div>
     </li>
 
