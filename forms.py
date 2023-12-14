@@ -60,6 +60,11 @@ class EditUserForm(FlaskForm):
         validators=[InputRequired(), Email(), Length(max=50)],
     )
 
+    location = StringField(
+        'Location',
+        validators=[Optional(), Length(max=300)]
+    )
+
     image_url = StringField(
         '(Optional) Image URL',
         validators=[Optional(), URL(), Length(max=255)]
@@ -79,9 +84,6 @@ class EditUserForm(FlaskForm):
         'Password',
         validators=[InputRequired(), Length(min=6, max=50)],
     )
-
-
-
 
 
 class CSRFForm(FlaskForm):

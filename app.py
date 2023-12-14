@@ -43,8 +43,8 @@ def add_user_to_g():
 def add_csrf_form_to_g():
     """Add csrf from to g"""
 
-    if CURR_USER_KEY in session:
-        g.csrf_form = CSRFForm()
+    if CURR_USER_KEY in session:    # Don't care about session here.
+        g.csrf_form = CSRFForm()    # CSRF for all users, logged in or not.
 
     else:
         g.csrf_form = None
@@ -127,7 +127,12 @@ def login():
 def logout():
     """Handle logout of user and redirect to homepage."""
 
-    if g.csrf_form.validate_on_submit():
+    # Also check for user here. TODO:
+    # Especially applies after putting in csrf for ALL USERS.
+
+    # if not formvalonsubmit or not user (just to clean it up a bit)
+    # keep away from having to write else statements if possible.
+    if g.csrf_form.validate_on_submit():   # Could pull this out into own var.
         do_logout()
 
         flash("Successfully logged out!")
@@ -203,7 +208,8 @@ def start_following(follow_id):
 
     Redirect to following page for the current for the current user.
     """
-
+    # Add the csrf form here.
+    # need g.csrf_form.validate_on_submit()
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -221,7 +227,7 @@ def stop_following(follow_id):
 
     Redirect to following page for the current for the current user.
     """
-
+    # ditto csrf
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -236,24 +242,31 @@ def stop_following(follow_id):
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
     """Update profile for current user."""
-    # IMPLEMENT THIS
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
     form = EditUserForm(obj=g.user)
 
+    # Put g.user into a variable because you see it over and over.
+    # user = g.user
     if form.validate_on_submit():
         g.user.username = form.username.data
         g.user.email = form.email.data
+        g.user.location = form.location.data
         g.user.image_url = (form.image_url.data if
                             form.image_url.data else DEFAULT_IMAGE_URL)
+                            # form.image_url.data or DEFAULT_IMAGE_URL
         g.user.header_image_url = (form.header_image_url.data if
                                    form.header_image_url.data else
                                    DEFAULT_HEADER_IMAGE_URL)
+                            # ditto the or
 
         g.user.bio = form.bio.data
 
+        # Actually, check the password first
+        # And then the else below is no longer needed.
         if User.authenticate(g.user.username, form.password.data):
             db.session.commit()
             return redirect(f'/users/{g.user.id}')
@@ -270,6 +283,10 @@ def delete_user():
 
     Redirect to signup page.
     """
+
+    # ditto csrf
+    # Also needs to delete things that depend on this user: messages, etc.
+    # (eventually)
 
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -329,9 +346,13 @@ def delete_message(message_id):
     Redirect to user page on success.
     """
 
+    # ditto csrf
+
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
+
+    # Check to see whether this msg belongs to this user.
 
     msg = Message.query.get_or_404(message_id)
     db.session.delete(msg)
@@ -353,8 +374,10 @@ def homepage():
     """
 
     if g.user:
-        query_ids = [user.id for user in g.user.following]
+        query_ids = [user.id for user in g.user.following]  # + [g.user.id]
         query_ids.append(g.user.id)
+        #  Be more descriptive than query_ids: following_and_current_user_ids
+        # Could also include a comment about WHY you're adding currentuserid
 
         messages = (Message
                     .query
