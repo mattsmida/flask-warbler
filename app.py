@@ -267,15 +267,15 @@ def delete_user():
 
     Redirect to signup page.
     """
-    # TODO: delete user messages first
-    # Also needs to delete things that depend on this user: messages, etc.
-    # (eventually)
+
     if not g.user or not g.csrf_form.validate_on_submit():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-
     do_logout()
+
+    for message in g.user.messages:
+        db.session.delete(message)
 
     db.session.delete(g.user)
     db.session.commit()
