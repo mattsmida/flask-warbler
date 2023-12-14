@@ -96,6 +96,9 @@ class User(db.Model):
         secondaryjoin=(Follow.user_following_id == id),
         backref="following",
     )
+    #relationship from likes to messages through user
+    # TODO: make sure relationship is working
+    likes = db.relationship('Message', secondary='likes')
 
     def __repr__(self):
         return f"<User #{self.id}: {self.username}, {self.email}>"
@@ -182,6 +185,22 @@ class Message(db.Model):
         nullable=False,
     )
 
+class Like(db.Model):
+    """Liked messages mapped to user"""
+
+    __tablename__ = "likes"
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('users.id'),
+        primary_key=True
+    )
+
+    message_id = db.Column(
+        db.Integer,
+        db.ForeignKey('messages.id'),
+        primary_key=True
+    )
 
 def connect_db(app):
     """Connect this database to provided Flask app.

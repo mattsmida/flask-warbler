@@ -352,16 +352,14 @@ def homepage():
     - anon users: no messages
     - logged in: 100 most recent messages of self & followed_users
     """
-
+    # breakpoint()
     if g.user:
-        query_ids = [user.id for user in g.user.following]  # + [g.user.id]
-        query_ids.append(g.user.id)
-        #  Be more descriptive than query_ids: following_and_current_user_ids
-        # Could also include a comment about WHY you're adding currentuserid
+        # id's of users we are following plus current user id
+        following_ids = [user.id for user in g.user.following] + [g.user.id]
 
         messages = (Message
                     .query
-                    .filter(Message.user_id.in_(query_ids))
+                    .filter(Message.user_id.in_(following_ids))
                     .order_by(Message.timestamp.desc())
                     .limit(100)
                     .all())
