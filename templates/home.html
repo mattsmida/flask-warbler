@@ -57,8 +57,10 @@
               <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
               <p>{{ msg.text }}</p>
             </div>
+            {% if msg.user.id != g.user.id %}
             <form action='/messages/{{ msg.id }}/like' method="POST">
               {{ g.csrf_form.hidden_tag() }}
+              <input type="hidden" value="homepage" name="referrer">
               <button class="btn btn-outline-secondary like-button">
                 {% if msg in g.user.likes %}
                 <i class="bi bi-star-fill"></i>
@@ -67,6 +69,7 @@
                 {% endif %}
               </button>
             </form>
+            {% endif %}
           </li>
         {% endfor %}
       </ul>

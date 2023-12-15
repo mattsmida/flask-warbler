@@ -196,7 +196,7 @@ def show_followers(user_id):
 
 @app.get('/users/<int:user_id>/likes')
 def show_user_likes(user_id):
-    """Show user profile."""
+    """Show user likes"""
 
     if not g.user:
         flash("Access unauthorized.", "danger")
@@ -337,20 +337,11 @@ def show_message(message_id):
 def like_message(message_id):
     """ Like or unlike a message. """
 
-    ##check for current user and csrf
     if not g.user or not g.csrf_form.validate_on_submit():
         flash("Access unauthorized.", "danger")
         return redirect("/")
-    ##query the "liked" message
-    ##check that the user id of message does not equal g.user id
-    ##check if that message is already in user likes
-    ##if its not, append to likes
 
     liked_msg = Message.query.get_or_404(message_id)
-
-    if liked_msg.user_id == g.user.id:
-        #redirect to current page??
-        return redirect("/")
 
     user_likes = g.user.likes
 
@@ -361,7 +352,14 @@ def like_message(message_id):
 
     db.session.commit()
 
-    return redirect("/")
+    if request.form["referrer"] == "homepage":
+        return redirect("/")
+    elif request.form["referrer"] == "user_profile":
+        return redirect(f"/users/{liked_msg.user.id}")
+    else:
+        return redirect(f"/users/{g.user.id}/likes")
+
+
 
 
 @app.get('/messages/<int:message_id>/like')
