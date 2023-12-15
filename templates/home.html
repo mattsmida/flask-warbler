@@ -57,13 +57,15 @@
               <span class="text-muted">{{ msg.timestamp.strftime('%d %B %Y') }}</span>
               <p>{{ msg.text }}</p>
             </div>
-            <form action='/messages/{{ msg.user.id }}/like' method="POST">
+            <form action='/messages/{{ msg.id }}/like' method="POST">
               <!-- conditional for changing star to bi bi-star-fill -->
               <!-- {# TODO: Add the like functionality here,
               then do the same for the two files called show.html #} -->
                 <!-- <input type='submit'></input> -->
-
-                <a href="/messages/{{ msg.id }}/like"><i class="bi bi-star"></i></a>
+              {{ g.csrf_form.hidden_tag() }}
+              <button class="btn btn-outline-secondary like-button">
+                <i class="bi bi-star"></i>
+              </button>
             </form>
           </li>
         {% endfor %}
@@ -72,4 +74,3 @@
 
   </div>
 {% endblock %}
-<!-- <i class="bi bi-star"></i> -->

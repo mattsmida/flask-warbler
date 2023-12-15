@@ -348,13 +348,16 @@ def like_message(message_id):
     else:
         g.user.likes.delete(liked_msg)
 
-# @app.get('/messages/<int:message_id>/like')
-# def like_message_get(message_id):
-#     liked_msg = Message.query.get_or_404(message_id)
-#     print("####liked message=", liked_msg)
-#     return render_template("home.html")
+    db.session.commit()
+
+    return redirect("/")
 
 
+@app.get('/messages/<int:message_id>/like')
+def like_message_get(message_id):
+    liked_msg = Message.query.get_or_404(message_id)
+    print("####liked message=", liked_msg)
+    return render_template("home.html")
 
 
 @app.post('/messages/<int:message_id>/delete')
