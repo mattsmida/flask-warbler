@@ -97,6 +97,8 @@ class User(db.Model):
         backref="following",
     )
 
+    # Backref to users that have liked a message TODO:
+
     # Relationship from likes to messages through user
     likes = db.relationship('Message', secondary='likes')
 

@@ -205,8 +205,11 @@ def show_user_likes(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/likes.html',
-                           user=user, user_likes=user.likes)
+    return render_template(
+        'users/likes.html',
+        user=user, user_likes=user.likes)  # format parens like this on newline
+        # user_likes is redundant in some cases like here since user=user here.
+
 
 @app.post('/users/follow/<int:follow_id>')
 def start_following(follow_id):
@@ -335,21 +338,21 @@ def show_message(message_id):
 
 
 @app.post('/messages/<int:message_id>/like')
-def like_message(message_id):
+def like_message(message_id):   # TODO: update name to reflect toggle (not: on)
     """ Like or unlike a message. """
 
     if not g.user or not g.csrf_form.validate_on_submit():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    liked_msg = Message.query.get_or_404(message_id)
+    liked_msg = Message.query.get_or_404(message_id)  # TODO: call it msg
 
     user_likes = g.user.likes
 
     if liked_msg not in user_likes:
         user_likes.append(liked_msg)
     else:
-        user_likes.pop(user_likes.index(liked_msg))
+        user_likes.pop(user_likes.index(liked_msg))  # TODO: or .remove()
 
     db.session.commit()
 
