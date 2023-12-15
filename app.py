@@ -346,7 +346,7 @@ def like_message(message_id):
     if liked_msg not in user_likes:
         g.user.likes.append(liked_msg)
     else:
-        g.user.likes.delete(liked_msg)
+        g.user.likes.delete(liked_msg)   # TODO: Make delete work.
 
     db.session.commit()
 
