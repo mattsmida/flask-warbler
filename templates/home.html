@@ -61,6 +61,7 @@
             <form action='/messages/{{ msg.id }}/like' method="POST">
               {{ g.csrf_form.hidden_tag() }}
               <input type="hidden" value="homepage" name="referrer">
+
               <button class="btn btn-outline-secondary like-button">
                 {% if msg in g.user.likes %}
                 <i class="bi bi-star-fill"></i>

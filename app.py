@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
+# app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = True
 app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
 toolbar = DebugToolbarExtension(app)
 
@@ -167,7 +167,7 @@ def show_user(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/show.html', user=user, user_likes=user.likes)
+    return render_template('users/show.html', user=user)
 
 
 @app.get('/users/<int:user_id>/following')
@@ -179,8 +179,7 @@ def show_following(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/following.html',
-                           user=user, user_likes=user.likes)
+    return render_template('users/following.html', user=user)
 
 
 @app.get('/users/<int:user_id>/followers')
@@ -192,8 +191,7 @@ def show_followers(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/followers.html', user=user,
-                           user_likes=user.likes)
+    return render_template('users/followers.html', user=user)
 
 
 @app.get('/users/<int:user_id>/likes')
@@ -205,10 +203,7 @@ def show_user_likes(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template(
-        'users/likes.html',
-        user=user, user_likes=user.likes)  # format parens like this on newline
-        # user_likes is redundant in some cases like here since user=user here.
+    return render_template('users/likes.html', user=user)
 
 
 @app.post('/users/follow/<int:follow_id>')
@@ -338,31 +333,39 @@ def show_message(message_id):
 
 
 @app.post('/messages/<int:message_id>/like')
-def like_message(message_id):   # TODO: update name to reflect toggle (not: on)
+def toggle_like(message_id):
     """ Like or unlike a message. """
 
     if not g.user or not g.csrf_form.validate_on_submit():
         flash("Access unauthorized.", "danger")
         return redirect("/")
 
-    liked_msg = Message.query.get_or_404(message_id)  # TODO: call it msg
+    msg = Message.query.get_or_404(message_id)
 
     user_likes = g.user.likes
 
-    if liked_msg not in user_likes:
-        user_likes.append(liked_msg)
+    if msg not in user_likes:
+        user_likes.append(msg)
     else:
-        user_likes.pop(user_likes.index(liked_msg))  # TODO: or .remove()
+        user_likes.remove(msg)
 
     db.session.commit()
 
     if request.form["referrer"] == "homepage":
         return redirect("/")
     elif request.form["referrer"] == "user_profile":
-        return redirect(f"/users/{liked_msg.user.id}")
+        return redirect(f"/users/{msg.user.id}")
     else:
         return redirect(f"/users/{g.user.id}/likes")
 
+    # TODO: use request.url
+    # breakpoint()
+    # if request.url == "/":
+    #     return redirect("/")
+    # elif request.url.find(f"/users/{msg.user.id}") >= 0:
+    #     return redirect(f"/users/{msg.user.id}")
+    # else:
+    #     return redirect(f"/users/{g.user.id}/likes")
 
 @app.post('/messages/<int:message_id>/delete')
 def delete_message(message_id):

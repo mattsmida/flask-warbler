@@ -39,12 +39,11 @@
               </a>
             </h4>
           </li>
-          <!-- TODO: link with amount of warbles that user has liked -->
           <li class="stat">
             <p class="small">Likes</p>
             <h4>
               <a href="/users/{{ user.id }}/likes">
-                {{ user_likes | length}}
+                {{ user.likes | length}}
               </a>
           </h4>
 
