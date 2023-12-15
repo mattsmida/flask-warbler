@@ -263,12 +263,11 @@ def profile():
             user.location = form.location.data
             user.image_url = form.image_url.data or DEFAULT_IMAGE_URL
             user.header_image_url = (form.header_image_url.data or
-                                    DEFAULT_HEADER_IMAGE_URL)
+                                     DEFAULT_HEADER_IMAGE_URL)
             user.bio = form.bio.data
 
             db.session.commit()
             return redirect(f'/users/{user.id}')
-
 
     flash("Wrong password.")
 
@@ -362,15 +361,6 @@ def like_message(message_id):
         return redirect(f"/users/{g.user.id}/likes")
 
 
-
-
-@app.get('/messages/<int:message_id>/like')
-def like_message_get(message_id):
-    liked_msg = Message.query.get_or_404(message_id)
-    print("####liked message=", liked_msg)
-    return render_template("home.html")
-
-
 @app.post('/messages/<int:message_id>/delete')
 def delete_message(message_id):
     """Delete a message.
@@ -402,7 +392,6 @@ def homepage():
     - anon users: no messages
     - logged in: 100 most recent messages of self & followed_users
     """
-    # breakpoint()
     if g.user:
         # id's of users we are following plus current user id
         following_ids = [user.id for user in g.user.following] + [g.user.id]

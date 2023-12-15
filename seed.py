@@ -17,16 +17,16 @@ with open('generator/follows.csv') as follows:
     db.session.bulk_insert_mappings(Follow, DictReader(follows))
 
 like1 = Like(
-    user_id = 1,
-    message_id = 897
+    user_id=1,
+    message_id=897
 )
 like2 = Like(
-    user_id = 2,
-    message_id = 63
+    user_id=2,
+    message_id=63
 )
 like3 = Like(
-    user_id = 3,
-    message_id = 439
+    user_id=3,
+    message_id=439
 )
 
 db.session.add_all([like1, like2, like3])
