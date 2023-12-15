@@ -49,3 +49,23 @@ class UserModelTestCase(TestCase):
         # User should have no messages & no followers
         self.assertEqual(len(u1.messages), 0)
         self.assertEqual(len(u1.followers), 0)
+
+    def test_following_another_user(self):
+        u1 = User.query.get(self.u1_id)
+        u2 = User.query.get(self.u2_id)
+
+        self.assertFalse(User.is_following(u1, u2))
+        self.assertFalse(User.is_followed_by(u1, u2))
+
+        u1.following.append(u2)
+        self.assertTrue(User.is_following(u1, u2))
+        self.assertTrue(User.is_followed_by(u2, u1))
+
+    def test_signup(self):
+        u3 = User.signup('thetrash', 't@t.org', 'passtown', '')
+        self.assertIsInstance(u3, User)
+
+        u1_doppleganger = User.signup("u133", "u133@email.com", "password", None)
+        print(u1_doppleganger)
+
+
