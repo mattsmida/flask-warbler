@@ -179,7 +179,8 @@ def show_following(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/following.html', user=user)
+    return render_template('users/following.html',
+                           user=user, user_likes=user.likes)
 
 
 @app.get('/users/<int:user_id>/followers')
@@ -191,7 +192,8 @@ def show_followers(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/followers.html', user=user)
+    return render_template('users/followers.html', user=user,
+                           user_likes=user.likes)
 
 
 @app.get('/users/<int:user_id>/likes')

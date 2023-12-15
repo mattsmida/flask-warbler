@@ -1,4 +1,3 @@
 [✓] Text whether you can like your own message
-[ ] Fix redirection when a message is liked (some go to weird places.)
-
-[ ] Fix positioning of star/like button when the message is short
+[✓] Fix redirection when a message is liked (some go to weird places.)
+[✓] Fix positioning of star/like button when the message is short
