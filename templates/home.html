@@ -58,13 +58,13 @@
               <p>{{ msg.text }}</p>
             </div>
             <form action='/messages/{{ msg.id }}/like' method="POST">
-              <!-- conditional for changing star to bi bi-star-fill -->
-              <!-- {# TODO: Add the like functionality here,
-              then do the same for the two files called show.html #} -->
-                <!-- <input type='submit'></input> -->
               {{ g.csrf_form.hidden_tag() }}
               <button class="btn btn-outline-secondary like-button">
+                {% if msg in g.user.likes %}
+                <i class="bi bi-star-fill"></i>
+                {% else %}
                 <i class="bi bi-star"></i>
+                {% endif %}
               </button>
             </form>
           </li>

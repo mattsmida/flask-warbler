@@ -167,7 +167,7 @@ def show_user(user_id):
         return redirect("/")
 
     user = User.query.get_or_404(user_id)
-    return render_template('users/show.html', user=user)
+    return render_template('users/show.html', user=user, user_likes=user.likes)
 
 
 @app.get('/users/<int:user_id>/following')
@@ -335,7 +335,6 @@ def like_message(message_id):
     ##if its not, append to likes
 
     liked_msg = Message.query.get_or_404(message_id)
-    print("####liked message=", liked_msg)
 
     if liked_msg.user_id == g.user.id:
         #redirect to current page??
@@ -344,9 +343,9 @@ def like_message(message_id):
     user_likes = g.user.likes
 
     if liked_msg not in user_likes:
-        g.user.likes.append(liked_msg)
+        user_likes.append(liked_msg)
     else:
-        g.user.likes.delete(liked_msg)   # TODO: Make delete work.
+        user_likes.pop(user_likes.index(liked_msg))
 
     db.session.commit()
 
