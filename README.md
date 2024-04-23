@@ -15,3 +15,7 @@ You can test-drive Warbler at [warbler.m4t7.com](https://warbler.m4t7.com).
 - **Front-end development**: Gaining hands-on experience with front-end development using Bootstrap, improving the application's user interface.
 
 This project has provided a solid foundation in full-stack web development, covering various aspects of back-end and front-end development, testing, and user authentication.
+
+---
+
+*AIL3*
