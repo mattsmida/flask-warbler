@@ -2,8 +2,6 @@
 
 Warbler is a Twitter-like application built using Python, Flask, and SQLAlchemy. This project involved working with an existing codebase, fixing bugs, writing tests, and implementing new features, which provided valuable insights into real-world software development practices.
 
-You can test-drive Warbler at [warbler.m4t7.com](https://warbler.m4t7.com).
-
 ## Takeaways from working on this project
 
 - **Codebase navigation and understanding**: Delving into an existing codebase, understanding its structure, and identifying areas for improvement.
